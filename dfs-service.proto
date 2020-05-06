@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package dfs_service;
+
+import "google/protobuf/timestamp.proto";
+
+service DFSService {
+    rpc Store (stream FileData) returns (FileAck);
+    rpc Fetch (FileName) returns (stream FileData);
+    rpc ListAll (EmptyRequest) returns (AllFiles);
+    rpc GetFileStatus (FileName) returns (FileStatus);
+    rpc GetLock (FileName) returns (WriteLock);
+    rpc CallbackList(FileName) returns (AllFiles);
+    rpc Delete (FileName) returns (FileAck);
+}
+
+message FileData {
+    string name = 1;
+    bytes data = 2;
+    uint32 crc = 3;
+    string client_id = 4;
+    uint64 mtime = 5;
+}
+
+message FileName {
+    string name = 1;
+    uint32 crc = 2;
+    string client_id = 3;
+    uint64 mtime = 4;
+}
+
+message FileAck {
+    string name = 1;
+    google.protobuf.Timestamp last_modified = 2;
+    uint32 crc = 3;
+}
+
+message AllFiles {
+    repeated FileStatus filestat = 1;
+}
+
+message FileStatus {
+    string name = 1;
+    uint64 size = 2;
+    google.protobuf.Timestamp created = 3;
+    google.protobuf.Timestamp last_modified = 4;
+    uint32 crc = 5;
+}
+
+message EmptyRequest {
+    string client_id = 1;
+}
+
+message WriteLock {
+}
+
+
+
+
